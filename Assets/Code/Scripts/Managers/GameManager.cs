@@ -4,21 +4,36 @@ public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; private set; }
 
     public bool isGameRunning = false;
-    public int points = 0;
-    private void Awake() {
+    private int points = 0;
+    private float elapsedTime = 0f;
+
+    void Awake() {
         if (Instance == null) {
             Instance = this;
         } else {
             Destroy(gameObject);
         }
     }
+
     void Start() {
-        isGameRunning = true;
+        InitGame();
+    }
+    void Update() {
+        if (isGameRunning) {
+            elapsedTime += Time.deltaTime;
+            UIManager.Instance.UpdateTimeText(elapsedTime);
+        }
     }
 
+    void InitGame() {
+        isGameRunning = true;
+        points = 0;
+
+    }
     public void AddPoint() {
         if (isGameRunning) {
-            points = 0;
+            points++;
+            UIManager.Instance.UpdatePointsText(points);
         }
     }
 
