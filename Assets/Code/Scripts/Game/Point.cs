@@ -1,3 +1,4 @@
+using MelenitasDev.SoundsGood;
 using UnityEngine;
 
 public class Point : MonoBehaviour {
@@ -12,7 +13,8 @@ public class Point : MonoBehaviour {
 
     void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Player")) {
-            GameManager.Instance.AddPoint();
+            AudioManager.Instance.PlaySoundEffect(SFX.point);
+            LevelManager.Instance.AddPoint();
             Instantiate(pointTakenEffect, transform.position, Quaternion.identity);
             Destroy(this.gameObject);
         }

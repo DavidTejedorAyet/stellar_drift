@@ -2,20 +2,12 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour {
-    public static UIManager Instance { get; private set; }
+public class UIM_GameScene : MonoBehaviour {
     public GameObject inGameUIPanel;
     public GameObject pauseMenuPanel;
 
     public TextMeshProUGUI pointsText;
     public TextMeshProUGUI timeText;
-    private void Awake() {
-        if (Instance == null) {
-            Instance = this;
-        } else {
-            Destroy(gameObject);
-        }
-    }
 
     void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {
@@ -46,5 +38,12 @@ public class UIManager : MonoBehaviour {
 
     public void UpdatePointsText(int points) {
         pointsText.text = points.ToString();
+    }
+
+    public void ChangeMusicVolume(float volume) {
+        AudioManager.Instance.ChangeMusicVolume(volume);
+    }
+    public void ChangeEffectVolume(float volume) {
+        AudioManager.Instance.ChangeEffectVolume(volume);
     }
 }

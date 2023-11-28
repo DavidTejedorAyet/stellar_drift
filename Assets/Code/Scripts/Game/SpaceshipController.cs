@@ -1,3 +1,4 @@
+using MelenitasDev.SoundsGood;
 using System.Collections;
 using UnityEngine;
 
@@ -48,13 +49,16 @@ public class SpaceshipController : MonoBehaviour {
         transform.rotation = Quaternion.Euler(currentTilt, 90, 0);
     }
     public void DestroyShip() {
+        AudioManager.Instance.PlaySoundEffect(SFX.explosion);
+
         horizontalSpeed = 0f;
         verticalSpeed = 0f;
 
         Instantiate(explosionParticle, transform.position, Quaternion.identity);
 
+        LevelManager.Instance.FinishGame();
         StartCoroutine(DisableMeshRendererAfterDelay());
-        GameManager.Instance.isGameRunning = false;
+
     }
     private IEnumerator DisableMeshRendererAfterDelay() {
         yield return new WaitForSeconds(0.15f);

@@ -73,13 +73,8 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 7298ad09e64f3994694687b0db4f4c96, type: 3}
     compressionPreset: 0
     forceToMono: 0
-  - tag: test
+  - tag: background
     clips:
-    - {fileID: 8300000, guid: 01b8dc98820f2b94fbadd782ca1921f8, type: 3}
-    compressionPreset: 0
-    forceToMono: 0
-  - tag: test2
-    clips:
-    - {fileID: 8300000, guid: 9153b9bb21cfa194f8ae0b1795baa0b7, type: 3}
+    - {fileID: 8300000, guid: a4b3be5758fc7b445a6987422b2c6d29, type: 3}
     compressionPreset: 0
     forceToMono: 0

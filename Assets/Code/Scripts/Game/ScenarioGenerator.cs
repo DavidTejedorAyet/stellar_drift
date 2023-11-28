@@ -14,6 +14,7 @@ public class ScenarioGenerator : MonoBehaviour {
 
     private int totalWeight;
 
+    [SerializeField] private Material[] tileMaterials;
 
     void Start() {
         CalculateTotalWeight();
@@ -31,6 +32,11 @@ public class ScenarioGenerator : MonoBehaviour {
         }
     }
 
+    private void Update() {
+        int bot = GameObject.FindGameObjectsWithTag("Tile").Length;
+        int up = GameObject.FindGameObjectsWithTag("Tile").Length;
+        Debug.Log(bot + up);
+    }
     // Genera una cantidad inicial de tiles al comienzo
     void GenerateInitialTiles() {
         for (int i = 0; i < initialTilesAmount; i++) {
@@ -40,6 +46,7 @@ public class ScenarioGenerator : MonoBehaviour {
 
     // Genera y posiciona un nuevo tile en el escenario
     public void GenerateTile() {
+        // TODO: separar el top del bottom
         GameObject topTilePrefab = SelectTilePrefab(wallTiles);
         GameObject bottomTilePrefab = SelectTilePrefab(wallTiles);
 
@@ -58,8 +65,6 @@ public class ScenarioGenerator : MonoBehaviour {
 
     public IEnumerator GenerateCenterTile() {
         do {
-            Debug.Log("Creando tile central");
-
             yield return new WaitForSeconds(1f);
 
             // Decidir si generar un tile central
@@ -98,7 +103,7 @@ public class ScenarioGenerator : MonoBehaviour {
 
 
 
-    // Llamada para ajustar los pesos
+    // Función para ajustar los pesos
     public void AdjustTileWeights(string tileName, int newWeight) {
         foreach (var tile in wallTiles) {
             if (tile.gameObject.name == tileName) {
@@ -107,5 +112,52 @@ public class ScenarioGenerator : MonoBehaviour {
             }
         }
         CalculateTotalWeight(); // Recalcular el peso total después de hacer el ajuste
+    }
+
+    private void AdjustTileMaterials(int level) {
+        foreach (var tile in wallTiles) {
+            tile.gameObject.GetComponent<Renderer>().material = tileMaterials[level];
+        }
+        foreach (var tile in centerTiles) {
+            tile.gameObject.GetComponent<Renderer>().material = tileMaterials[level];
+        }
+    }
+
+    public void AdjustDifficult(int level) {
+        AdjustTileMaterials(level);
+        switch (level) {
+            case 0:
+                AdjustTileWeights("tilePlain1", 200);
+                AdjustTileWeights("tilePlain2", 30);
+                AdjustTileWeights("tileEmpty", 60);
+                AdjustTileWeights("tilePointed1", 15);
+                AdjustTileWeights("tilePointed2", 10);
+                AdjustTileWeights("tilePointed3", 3);
+                break;
+            case 1:
+                AdjustTileWeights("tilePlain1", 120);
+                AdjustTileWeights("tilePlain2", 50);
+                AdjustTileWeights("tileEmpty", 15);
+                AdjustTileWeights("tilePointed1", 45);
+                AdjustTileWeights("tilePointed2", 30);
+                AdjustTileWeights("tilePointed3", 15);
+                break;
+            case 2:
+                AdjustTileWeights("tilePlain1", 80);
+                AdjustTileWeights("tilePlain2", 50);
+                AdjustTileWeights("tileEmpty", 15);
+                AdjustTileWeights("tilePointed1", 30);
+                AdjustTileWeights("tilePointed2", 30);
+                AdjustTileWeights("tilePointed3", 30);
+                break;
+            case 3:
+                AdjustTileWeights("tilePlain1", 30);
+                AdjustTileWeights("tilePlain2", 50);
+                AdjustTileWeights("tileEmpty", 15);
+                AdjustTileWeights("tilePointed1", 10);
+                AdjustTileWeights("tilePointed2", 30);
+                AdjustTileWeights("tilePointed3", 30);
+                break;
+        }
     }
 }

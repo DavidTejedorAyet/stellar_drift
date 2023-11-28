@@ -9,6 +9,8 @@ TagManager:
   - TileUp
   - TileCenter
   - Point
+  - TileEmpty
+  - TileEmptyUp
   layers:
   - Default
   - TransparentFX

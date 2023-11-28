@@ -9,10 +9,12 @@ public class TilePoolTrigger : MonoBehaviour {
         scenarioGenerator = FindObjectOfType<ScenarioGenerator>();
     }
 
-    private void OnTriggerEnter(Collider other) {
+    private void OnTriggerExit(Collider other) {
         // Comprueba si es la nave la que ha entrado en el trigger
         if (other.CompareTag("Tile")) {
             scenarioGenerator.GenerateTile();
+        } else if (other.CompareTag("Point")) {
+            Destroy(other.gameObject);
         }
     }
 }
