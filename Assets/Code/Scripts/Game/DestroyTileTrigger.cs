@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TilePoolTrigger : MonoBehaviour {
+public class DestroyTileTrigger : MonoBehaviour {
 
     private ScenarioGenerator scenarioGenerator;
 
@@ -12,9 +12,10 @@ public class TilePoolTrigger : MonoBehaviour {
     private void OnTriggerExit(Collider other) {
         // Comprueba si es la nave la que ha entrado en el trigger
         if (other.CompareTag("Tile")) {
-            scenarioGenerator.GenerateTile();
-        } else if (other.CompareTag("Point")) {
-            Destroy(other.gameObject);
+            scenarioGenerator.GenerateBottomTile();
+        } else if (other.CompareTag("TileUp")) {
+            scenarioGenerator.GenerateTopTile();
         }
+        Destroy(other.gameObject);
     }
 }

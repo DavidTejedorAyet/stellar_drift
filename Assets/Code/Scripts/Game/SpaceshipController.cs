@@ -56,7 +56,7 @@ public class SpaceshipController : MonoBehaviour {
 
         Instantiate(explosionParticle, transform.position, Quaternion.identity);
 
-        LevelManager.Instance.FinishGame();
+        StartCoroutine(LevelManager.Instance.FinishGame());
         StartCoroutine(DisableMeshRendererAfterDelay());
 
     }

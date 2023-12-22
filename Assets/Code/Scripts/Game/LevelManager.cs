@@ -1,9 +1,9 @@
+using System.Collections;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour {
     public static LevelManager Instance { get; private set; }
-    public bool isGameRunning = false;
-    public int level = 0;
+    public int dificult = 0;
     [SerializeField] private UIM_GameScene uiManager;
     [SerializeField] private ScenarioGenerator scenarioGenerator;
     private int points = 0;
@@ -16,10 +16,14 @@ public class LevelManager : MonoBehaviour {
             Destroy(gameObject);
         }
     }
+
     void Start() {
-        InitGame();
+        uiManager.ShowInGameUI();
     }
     void Update() {
+        if (Input.GetKeyDown(KeyCode.Space) && !GameManager.Instance.isGameRunning) {
+            InitGame();
+        }
         if (!GameManager.Instance.isGameRunning) return;
         elapsedTime += Time.deltaTime;
         uiManager.UpdateTimeText(elapsedTime);
@@ -29,20 +33,24 @@ public class LevelManager : MonoBehaviour {
         GameManager.Instance.isGameRunning = true;
         points = 0;
         scenarioGenerator.AdjustDifficult(0);
-        level = 0;
+        dificult = 0;
     }
 
-    public void FinishGame() {
+    public IEnumerator FinishGame() {
         GameManager.Instance.isGameRunning = false;
         GameManager.Instance.SaveScore(points);
+
+
+        yield return new WaitForSeconds(5);
+        uiManager.ShowGameOverPanel();
     }
     public void AddPoint() {
         if (!GameManager.Instance.isGameRunning) return;
         points++;
         uiManager.UpdatePointsText(points);
         if (points == 10 || points == 20 || points == 30) {
-            level++;
-            scenarioGenerator.AdjustDifficult(level);
+            dificult++;
+            scenarioGenerator.AdjustDifficult(dificult);
         }
     }
 }

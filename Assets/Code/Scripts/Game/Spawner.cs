@@ -12,7 +12,7 @@ public class Spawner : MonoBehaviour {
     private float nextSpawnTime;
 
     void Update() {
-        if (Time.time >= nextSpawnTime) {
+        if (Time.time >= nextSpawnTime && GameManager.Instance.isGameRunning) {
             SpawnPoint();
             nextSpawnTime = Time.time + spawnRate;
         }

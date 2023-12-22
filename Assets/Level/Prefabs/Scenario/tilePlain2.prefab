@@ -54,7 +54,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7719305205393873288, guid: f0bac5916ab28df40a8a30482b20a921, type: 3}
       propertyPath: weight
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7898410895152888760, guid: f0bac5916ab28df40a8a30482b20a921, type: 3}
       propertyPath: m_VersionIndex

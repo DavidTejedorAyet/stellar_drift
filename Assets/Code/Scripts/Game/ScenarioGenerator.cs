@@ -10,7 +10,8 @@ public class ScenarioGenerator : MonoBehaviour {
     public float bottomYPosition;
     public float topYPosition;
 
-    private Vector3 nextWallPosition;
+    private Vector3 nextTopTilePosition;
+    private Vector3 nextBottomTilePosition;
 
     private int totalWeight;
 
@@ -18,11 +19,19 @@ public class ScenarioGenerator : MonoBehaviour {
 
     void Start() {
         CalculateTotalWeight();
-        nextWallPosition = new Vector3(0, bottomYPosition, 0);
+        AdjustDifficult(level: 0);
+        nextTopTilePosition = new Vector3(0, topYPosition, 0);
+        nextBottomTilePosition = new Vector3(0, bottomYPosition, 0);
         GenerateInitialTiles();
         StartCoroutine(GenerateCenterTile());
-    }
 
+    }
+    private void Update() {
+        int bot = GameObject.FindGameObjectsWithTag("Tile").Length;
+        int top = GameObject.FindGameObjectsWithTag("TileUp").Length;
+        int center = GameObject.FindGameObjectsWithTag("TileCenter").Length;
+        Debug.Log("Tiles:" + (bot + top + center) + "Top: " + top + "Bot: " + bot + "Center: " + center);
+    }
 
     // Calcula el peso total de todos los tiles disponibles para la generación
     void CalculateTotalWeight() {
@@ -32,37 +41,46 @@ public class ScenarioGenerator : MonoBehaviour {
         }
     }
 
-    private void Update() {
-        int bot = GameObject.FindGameObjectsWithTag("Tile").Length;
-        int up = GameObject.FindGameObjectsWithTag("Tile").Length;
-        Debug.Log(bot + up);
-    }
     // Genera una cantidad inicial de tiles al comienzo
     void GenerateInitialTiles() {
         for (int i = 0; i < initialTilesAmount; i++) {
-            GenerateTile();
+            GenerateTopTile();
+            GenerateBottomTile();
         }
     }
 
     // Genera y posiciona un nuevo tile en el escenario
-    public void GenerateTile() {
-        // TODO: separar el top del bottom
+    public void GenerateTopTile() {
         GameObject topTilePrefab = SelectTilePrefab(wallTiles);
+
+        // Instanciar el segmento superior
+        GameObject topTile = Instantiate(topTilePrefab, nextTopTilePosition, Quaternion.identity);
+        topTile.transform.localScale = new Vector3(1, -1, 1);
+        topTile.tag = topTilePrefab.tag + "Up";
+
+        // Ajustar la posición del próximo segmento
+        AdjustNextSegmentPosition(topTile);
+    }
+
+    public void GenerateBottomTile() {
         GameObject bottomTilePrefab = SelectTilePrefab(wallTiles);
 
         // Instanciar el segmento inferior
-        GameObject bottomSegment = Instantiate(bottomTilePrefab, nextWallPosition, Quaternion.identity);
-
-        // Instanciar el segmento superior
-        Vector3 topPosition = new Vector3(nextWallPosition.x, topYPosition, nextWallPosition.z);
-        GameObject topSegment = Instantiate(topTilePrefab, topPosition, Quaternion.identity);
-        topSegment.tag = topTilePrefab.tag + "Up";
-        topSegment.transform.localScale = new Vector3(topSegment.transform.localScale.x, -1, topSegment.transform.localScale.z);
-
+        GameObject bottomTile = Instantiate(bottomTilePrefab, nextBottomTilePosition, Quaternion.identity);
         // Ajustar la posición del próximo segmento
-        AdjustNextSegmentPosition(bottomSegment);
+        AdjustNextSegmentPosition(bottomTile);
     }
-
+    private void AdjustNextSegmentPosition(GameObject tile) {
+        Renderer renderer = tile.GetComponent<Renderer>();
+        if (renderer != null) {
+            // Usa el tamaño del collider para determinar la longitud del tile
+            if (tile.CompareTag("Tile")) {
+                nextBottomTilePosition.x += renderer.bounds.size.x;
+            } else {
+                nextTopTilePosition.x += renderer.bounds.size.x;
+            }
+        }
+    }
     public IEnumerator GenerateCenterTile() {
         do {
             yield return new WaitForSeconds(1f);
@@ -70,19 +88,11 @@ public class ScenarioGenerator : MonoBehaviour {
             // Decidir si generar un tile central
             if (Random.value < probabilityOfCenterTile) {
                 GameObject centerTilePrefab = SelectTilePrefab(centerTiles);
-                Vector3 centerPosition = new Vector3(nextWallPosition.x, 0, nextWallPosition.z);
+                Vector3 centerPosition = new Vector3(nextTopTilePosition.x, 0, nextTopTilePosition.z);
                 GameObject centerTile = Instantiate(centerTilePrefab, centerPosition, Quaternion.identity);
             }
         }
         while (GameManager.Instance.isGameRunning);
-    }
-
-    private void AdjustNextSegmentPosition(GameObject segment) {
-        Renderer renderer = segment.GetComponent<Renderer>();
-        if (renderer != null) {
-            // Usa el tamaño del collider para determinar la longitud del tile
-            nextWallPosition.x += renderer.bounds.size.x;
-        }
     }
 
     // Selecciona un tile basado en el peso para su generación
